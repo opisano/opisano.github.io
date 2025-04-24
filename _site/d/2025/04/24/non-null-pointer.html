@@ -58,7 +58,7 @@
 <ul>
   <li>The solution must check for nullity when converting from a nullable pointer and throw in case of error.</li>
   <li>Using non-null pointer must be as efficient as using a normal pointer.</li>
-  <li>Conversion rules must be respecting (for instance, we must be able to create a const(T)* from a T*).</li>
+  <li>Implicit conversion rules must be respected (for instance, we must be able to create a const(T)* from a T*).</li>
 </ul>
 
 <p>It would resemble a smart pointer, but instead of providing ownership semantics, it would enforce it is not null.</p>
@@ -192,8 +192,6 @@ Since I chose to use the pointer type as <code class="language-plaintext highlig
     <span class="c1">// if the pointer can be modified, we define assignement operators.</span>
     <span class="k">static</span> <span class="k">if</span> <span class="p">(</span><span class="n">isMutable</span><span class="p">!</span><span class="n">T</span><span class="p">)</span>
     <span class="p">{</span>
-        <span class="k">auto</span> <span class="n">opAssign</span>
-
         <span class="cm">/**
         * Assignment operator for raw pointer
         */</span>

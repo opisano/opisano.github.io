@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="https://opisano.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://opisano.github.io/" rel="alternate" type="text/html" /><updated>2025-04-24T17:02:26+02:00</updated><id>https://opisano.github.io/feed.xml</id><title type="html">Ol’s homepage</title><subtitle>My reflexions on tech and musick</subtitle><entry><title type="html">Creating a non-null pointer in D</title><link href="https://opisano.github.io/d/2025/04/24/non-null-pointer.html" rel="alternate" type="text/html" title="Creating a non-null pointer in D" /><published>2025-04-24T16:29:59+02:00</published><updated>2025-04-24T16:29:59+02:00</updated><id>https://opisano.github.io/d/2025/04/24/non-null-pointer</id><content type="html" xml:base="https://opisano.github.io/d/2025/04/24/non-null-pointer.html"><![CDATA[<p>One of the recent discussions in the D programming language forums has been about adding support for non-nullable reference types in the language, similarly to what C# did in the recent years. One of the highlights of the discussion was that such a type could be implemented as a library solution, instead of baking it in the language.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="https://opisano.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://opisano.github.io/" rel="alternate" type="text/html" /><updated>2025-04-24T17:09:54+02:00</updated><id>https://opisano.github.io/feed.xml</id><title type="html">Ol’s homepage</title><subtitle>My reflexions on tech and musick</subtitle><entry><title type="html">Creating a non-null pointer in D</title><link href="https://opisano.github.io/d/2025/04/24/non-null-pointer.html" rel="alternate" type="text/html" title="Creating a non-null pointer in D" /><published>2025-04-24T16:29:59+02:00</published><updated>2025-04-24T16:29:59+02:00</updated><id>https://opisano.github.io/d/2025/04/24/non-null-pointer</id><content type="html" xml:base="https://opisano.github.io/d/2025/04/24/non-null-pointer.html"><![CDATA[<p>One of the recent discussions in the D programming language forums has been about adding support for non-nullable reference types in the language, similarly to what C# did in the recent years. One of the highlights of the discussion was that such a type could be implemented as a library solution, instead of baking it in the language.</p>
 
 <p>That picked my curiosity and I decided to give it a try to see I could write such a type. In that post I will describe my solution.</p>
 
@@ -9,7 +9,7 @@
 <ul>
   <li>The solution must check for nullity when converting from a nullable pointer and throw in case of error.</li>
   <li>Using non-null pointer must be as efficient as using a normal pointer.</li>
-  <li>Conversion rules must be respecting (for instance, we must be able to create a const(T)* from a T*).</li>
+  <li>Implicit conversion rules must be respected (for instance, we must be able to create a const(T)* from a T*).</li>
 </ul>
 
 <p>It would resemble a smart pointer, but instead of providing ownership semantics, it would enforce it is not null.</p>
@@ -143,8 +143,6 @@ Since I chose to use the pointer type as <code class="language-plaintext highlig
     <span class="c1">// if the pointer can be modified, we define assignement operators.</span>
     <span class="k">static</span> <span class="k">if</span> <span class="p">(</span><span class="n">isMutable</span><span class="p">!</span><span class="n">T</span><span class="p">)</span>
     <span class="p">{</span>
-        <span class="k">auto</span> <span class="n">opAssign</span>
-
         <span class="cm">/**
         * Assignment operator for raw pointer
         */</span>

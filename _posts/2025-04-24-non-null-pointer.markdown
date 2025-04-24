@@ -15,7 +15,7 @@ First of all let's describe what is required:
 
  * The solution must check for nullity when converting from a nullable pointer and throw in case of error.
  * Using non-null pointer must be as efficient as using a normal pointer.
- * Conversion rules must be respecting (for instance, we must be able to create a const(T)* from a T*).
+ * Implicit conversion rules must be respected (for instance, we must be able to create a const(T)* from a T*).
 
 It would resemble a smart pointer, but instead of providing ownership semantics, it would enforce it is not null.
 
@@ -171,8 +171,6 @@ struct NonNull(T) if (isPointer!T)
     // if the pointer can be modified, we define assignement operators.
     static if (isMutable!T)
     {
-        auto opAssign
-
         /**
         * Assignment operator for raw pointer
         */
