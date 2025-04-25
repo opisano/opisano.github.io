@@ -49,7 +49,7 @@
   <div class="post-content e-content" itemprop="articleBody">
     <p>One of the recent discussions in the D programming language forums has been about adding support for non-nullable reference types in the language, similarly to what C# did in the recent years. One of the highlights of the discussion was that such a type could be implemented as a library solution, instead of baking it in the language.</p>
 
-<p>That picked my curiosity and I decided to give it a try to see I could write such a type. In that post I will describe my solution.</p>
+<p>That picked my curiosity and I decided to give it a try to see if I could write such a type. In that post I will describe my solution.</p>
 
 <h1 id="requirements">Requirements</h1>
 
@@ -133,7 +133,7 @@
     <span class="c1">// ...</span>
 <span class="p">}</span></code></pre></figure>
 
-<p>This syntax may need some explaination. We declare here a copy constructor, which has a type parameter <code class="language-plaintext highlighter-rouge">U</code>, and a parameter <code class="language-plaintext highlighter-rouge">rhs</code> of type <code class="language-plaintext highlighter-rouge">NonNull!U</code>. What is inside the constraint is called an is-expression. Is expression can take several forms and are used to check for type validity. The <code class="language-plaintext highlighter-rouge">is(U : T)</code> form here checks if one type can be implicitly converted to another.</p>
+<p>This syntax may need some explanation. We declare here a copy constructor, which has a type parameter <code class="language-plaintext highlighter-rouge">U</code>, and a parameter <code class="language-plaintext highlighter-rouge">rhs</code> of type <code class="language-plaintext highlighter-rouge">NonNull!U</code>. What is inside the constraint is called an is-expression. Is expression can take several forms and are used to check for type validity. The <code class="language-plaintext highlighter-rouge">is(U : T)</code> form here checks if one type can be implicitly converted to another.</p>
 
 <h1 id="giving-it-a-try">Giving it a try</h1>
 
@@ -180,7 +180,7 @@ Since I chose to use the pointer type as <code class="language-plaintext highlig
 
 <p>What if we want to change the value of the pointer ? We need to overload the assignement operator for both nullable and non-nullable variants. These two functions must only be defined if the pointer is mutable, otherwise, it would cause a compilation error. This can be checked by <code class="language-plaintext highlighter-rouge">static if</code> (compile-time if).</p>
 
-<p>Mutability is checked via the <code class="language-plaintext highlighter-rouge">isMutable</code> traits, which evaluates to <code class="language-plaintext highlighter-rouge">true</code> for mutable pointers and <code class="language-plaintext highlighter-rouge">false</code> for <code class="language-plaintext highlighter-rouge">const</code> or <code class="language-plaintext highlighter-rouge">immutable</code> pointers.</p>
+<p>Mutability is checked via the <code class="language-plaintext highlighter-rouge">isMutable</code> trait, which evaluates to <code class="language-plaintext highlighter-rouge">true</code> for mutable pointers and <code class="language-plaintext highlighter-rouge">false</code> for <code class="language-plaintext highlighter-rouge">const</code> or <code class="language-plaintext highlighter-rouge">immutable</code> pointers.</p>
 
 <figure class="highlight"><pre><code class="language-d" data-lang="d"><span class="k">struct</span> <span class="n">NonNull</span><span class="p">(</span><span class="n">T</span><span class="p">)</span> <span class="k">if</span> <span class="p">(</span><span class="n">isPointer</span><span class="p">!</span><span class="n">T</span><span class="p">)</span>
 <span class="p">{</span>
@@ -244,7 +244,7 @@ Since I chose to use the pointer type as <code class="language-plaintext highlig
 </div>
 
       <div class="footer-col footer-col-3">
-        <p>My reflexions on tech and musick</p>
+        <p>My reflexions on tech and music</p>
       </div>
     </div>
 

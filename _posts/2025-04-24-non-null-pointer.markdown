@@ -7,7 +7,7 @@ categories: D
 
 One of the recent discussions in the D programming language forums has been about adding support for non-nullable reference types in the language, similarly to what C# did in the recent years. One of the highlights of the discussion was that such a type could be implemented as a library solution, instead of baking it in the language. 
 
-That picked my curiosity and I decided to give it a try to see I could write such a type. In that post I will describe my solution. 
+That picked my curiosity and I decided to give it a try to see if I could write such a type. In that post I will describe my solution. 
 
 # Requirements 
 
@@ -100,7 +100,7 @@ struct NonNull(T) if (isPointer!T)
 }
 {% endhighlight %}
 
-This syntax may need some explaination. We declare here a copy constructor, which has a type parameter `U`, and a parameter `rhs` of type `NonNull!U`. What is inside the constraint is called an is-expression. Is expression can take several forms and are used to check for type validity. The `is(U : T)` form here checks if one type can be implicitly converted to another. 
+This syntax may need some explanation. We declare here a copy constructor, which has a type parameter `U`, and a parameter `rhs` of type `NonNull!U`. What is inside the constraint is called an is-expression. Is expression can take several forms and are used to check for type validity. The `is(U : T)` form here checks if one type can be implicitly converted to another. 
 
 
 # Giving it a try 
@@ -157,7 +157,7 @@ assert (i == 42);
 
 What if we want to change the value of the pointer ? We need to overload the assignement operator for both nullable and non-nullable variants. These two functions must only be defined if the pointer is mutable, otherwise, it would cause a compilation error. This can be checked by `static if` (compile-time if). 
 
-Mutability is checked via the `isMutable` traits, which evaluates to `true` for mutable pointers and `false` for `const` or `immutable` pointers.
+Mutability is checked via the `isMutable` trait, which evaluates to `true` for mutable pointers and `false` for `const` or `immutable` pointers.
 
 {% highlight D %}
 
