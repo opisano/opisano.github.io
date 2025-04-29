@@ -1,4 +1,162 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="https://opisano.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://opisano.github.io/" rel="alternate" type="text/html" /><updated>2025-04-25T15:36:11+02:00</updated><id>https://opisano.github.io/feed.xml</id><title type="html">Ol’s homepage</title><subtitle>My reflexions on tech and music</subtitle><entry><title type="html">Creating a non-null pointer in D</title><link href="https://opisano.github.io/d/2025/04/24/non-null-pointer.html" rel="alternate" type="text/html" title="Creating a non-null pointer in D" /><published>2025-04-24T16:29:59+02:00</published><updated>2025-04-24T16:29:59+02:00</updated><id>https://opisano.github.io/d/2025/04/24/non-null-pointer</id><content type="html" xml:base="https://opisano.github.io/d/2025/04/24/non-null-pointer.html"><![CDATA[<p>One of the recent discussions in the D programming language forums has been about adding support for non-nullable reference types in the language, similarly to what C# did in the recent years. One of the highlights of the discussion was that such a type could be implemented as a library solution, instead of baking it in the language.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="https://opisano.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://opisano.github.io/" rel="alternate" type="text/html" /><updated>2025-04-29T22:08:10+02:00</updated><id>https://opisano.github.io/feed.xml</id><title type="html">Ol’s homepage</title><subtitle>My reflexions on tech and music</subtitle><entry><title type="html">Intro to Unicode</title><link href="https://opisano.github.io/programming/2025/04/29/unicode-intro.html" rel="alternate" type="text/html" title="Intro to Unicode" /><published>2025-04-29T19:03:59+02:00</published><updated>2025-04-29T19:03:59+02:00</updated><id>https://opisano.github.io/programming/2025/04/29/unicode-intro</id><content type="html" xml:base="https://opisano.github.io/programming/2025/04/29/unicode-intro.html"><![CDATA[<p>When talking to a former colleague, I realized that Unicode is somewhat misunderstood. I don’t pretend to know everything is to be known about, but I had the opportunity to play extensively with it, so this post is going to recap the concepts of Unicode and (hopefully), teach you one thing or two. At least from the point of view of a software developer. Fasten your seat belt and have fun.</p>
+
+<h1 id="first-thing-to-know-unicode-is-not-an-encoding">First thing to know: Unicode is not an encoding</h1>
+
+<p>Ok, this one may sound a bit strange if you previously read the documentation of a major operating system vendor, or some coffee-flavoured programming language but let’s be clear :</p>
+
+<ul>
+  <li>Unicode is not a text encoding</li>
+  <li>Unicode <em>characters</em> are not 16 bits wide.</li>
+</ul>
+
+<p>If any of these two statements hurts your beliefs, I am deeply sorry (no I am not, I am just being polite). It is time to take the red pill and to get out of the matrix.</p>
+
+<h1 id="how-unicode-should-be-viewed">How Unicode should be viewed</h1>
+
+<p>To get a grasp of Unicode, you can go to <a href="https://symbl.cc/en/unicode-table/">https://symbl.cc/en/unicode-table/</a>. Scroll the page is little bit. The heart of Unicode is just a giant table, with <em>symbols</em> associated to <em>numerical values</em>. For instance, the symbol <code class="language-plaintext highlighter-rouge">é</code> is associated to the number <code class="language-plaintext highlighter-rouge">U+00E9</code> (which is just a fancy way of saying that it is a hexadecimal value). There are 1 111 998 possible Unicode symbols.</p>
+
+<p>In particular, this does not say anything about:</p>
+
+<ul>
+  <li>How many bytes are used to store this value.</li>
+  <li>How these bytes are stored in memory.</li>
+</ul>
+
+<p>Which are what constitutes an encoding.</p>
+
+<p>Ok now, I am going to make a promise.</p>
+
+<p>For the remaining of this post, I won’t use the word <em>character</em> anymore. Because this word is <em>polysemic</em>. It bears multiple meanings. Too many. Instead, I am going to introduce some replacement words.</p>
+
+<h2 id="graphemes">Graphemes</h2>
+
+<p>Ok let’s go back to our giant table.</p>
+
+<p>The symbols that are displayed in the table are called <strong>graphemes</strong>. A grapheme is a single graphical unit that a reader recognizes as a single element of a writing system. For a western person, it could be an alphabetical letter or a punctuation sign. For another writing system, it may be something else.</p>
+
+<p>To get back to my previous example, <code class="language-plaintext highlighter-rouge">é</code> is a grapheme that was given a description: <em>small letter E with acute</em>.</p>
+
+<h2 id="code-points">Code points</h2>
+
+<p>Now that let’s define the numerical value. The correct name for that is <em>Unicode code point</em>. A code point is the basic part of information. A text is a sequence of code points. A grapheme can be defined by one or many code points. For instance, the <code class="language-plaintext highlighter-rouge">é</code> grapheme can be written in two ways:</p>
+
+<ul>
+  <li>using the <code class="language-plaintext highlighter-rouge">e</code> code point (U+0065), followed by the <code class="language-plaintext highlighter-rouge">´</code> code point (U+0301).</li>
+  <li>using a single code point (U+00E9)</li>
+</ul>
+
+<p>Note that I still haven’t said anything about the way code points are stored into memory…</p>
+
+<h2 id="glyphs">Glyphs</h2>
+
+<p>Effectively, graphemes can be obtained by combining multiple graphical parts together into a single representation. Those parts are called <em>glyphs</em>. Glyphs are important if you’re performing text rendering, but can be ignored for text processing purposes.</p>
+
+<p>What should be aware of, is that the same text can be obtained by different manners, which may lead to surprising results if you are trying perform text comparisons (Python code below):</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="o">&gt;&gt;&gt;</span> <span class="s">'</span><span class="se">\u00E9</span><span class="s">'</span>
+<span class="s">'é'</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="s">'</span><span class="se">\u0065\u0301</span><span class="s">'</span>
+<span class="s">'é'</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="s">'</span><span class="se">\u00E9</span><span class="s">'</span> <span class="o">==</span> <span class="s">'</span><span class="se">\u0065\u0301</span><span class="s">'</span>
+<span class="bp">False</span></code></pre></figure>
+
+<p>Imagine trying to access a file on your disk, but providing the wrong code point sequence. Imagine typing a URL in your browser, and accessing a phishing website…</p>
+
+<h1 id="normalization">Normalization</h1>
+
+<p>To avoid all these issues, Unicode text should be normalized prior to being compared. There are several normalizations possible, which can be divided in two groups:</p>
+
+<ul>
+  <li>Either we decompose text into the maximum number of code points</li>
+  <li>or we compose into the minimum number of code points.</li>
+</ul>
+
+<p>and then comparison is performed.</p>
+
+<h1 id="a-bit-of-history">A bit of history</h1>
+
+<p>Ok, now that you are definitively disgusted, let’s talk a bit about history. At the time I write this post, the latest Unicode version is 16.0. Version 1.0 was released in 1993, which means it now contains a lot more than it used to be. In fact, until 2001, it contained less than 65 536 entries in its table, which meant that 16 bit values were enough to encode text.</p>
+
+<p>This is why you may encounter some outdated documentation that used to state that unicode <em>was</em> a 16 bit encoding. It is known as UCS-2 and was declined in two variants: UCS-2 LE (little endian), and UCS-2 BE (big endian). UCS stands for <strong>Universal Character Set</strong> (sic). Today this encoding is considered obsolete, since it can only represent a fraction of Unicode.</p>
+
+<p>UCS-2 required to double the memory used for storing text and to change all your text processing functions. for instance, instead of the venerable C function <code class="language-plaintext highlighter-rouge">strlen()</code>, one should use the <code class="language-plaintext highlighter-rouge">wcslen()</code> function against an array of <code class="language-plaintext highlighter-rouge">wchar_t</code> elements.</p>
+
+<p>Windows NT was the first operating system to fully embrace UCS-2 and to set <code class="language-plaintext highlighter-rouge">sizeof(wchar_t) == 2</code>.</p>
+
+<p>Since 2001, UCS-2 has been superseeded by UCS-4, and some non-Windows systems define <code class="language-plaintext highlighter-rouge">sizeof(wchar_t) == 4</code>, but the idea of using 4 times more memory to store text was not acceptable for most of us, so someone had to invent a better way</p>
+
+<h1 id="unicode-encodings">Unicode encodings</h1>
+
+<p>Finally, I am going to talk about encodings! In the Unicode world, they are called <strong>Unicode Transformation Formats</strong> and come into different flavours: UTF-8, UTF-16 and UTF-32. They can represent the whole Unicode set. If Unicode by itself is not an encoding, it provides several of them.</p>
+
+<p>They all decompose code points into one or many <strong>code units</strong>. A code unit can be viewed as a 8/16/32 bit value that is used to encode a part or the entirety of a code point.</p>
+
+<h2 id="utf-8">UTF-8</h2>
+
+<p>UTF-8 uses between one and four 8 bit code units to encode a code point. It has several advantages over the other two:</p>
+
+<ul>
+  <li>It is backward compatible with US-ASCII (in fact any US-ASCII text is also a UTF-8 text).</li>
+  <li>It doesn’t have endianness issue, since every code unit is one byte.</li>
+  <li>Most of the C library such as <code class="language-plaintext highlighter-rouge">strlen()</code> are compatible with it.</li>
+</ul>
+
+<p>It has also disadvantages for languages that don’t use the latin alphabet. For instance in Japanese, the same text can occupy more space in UTF-8 than in UTF-16.</p>
+
+<p>To encode a code point into UTF-8, count how many bits are needed to represent the code point, and use the pattern described below</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Bits needed</th>
+      <th>Binary representation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>up to 7 bits</td>
+      <td>0XXX XXXX</td>
+    </tr>
+    <tr>
+      <td>8 to 11 bits</td>
+      <td>110X XXXX, 10XX XXXX</td>
+    </tr>
+    <tr>
+      <td>12 to 16 bits</td>
+      <td>1110 XXXX, 10XX XXXX, 10XX XXXX</td>
+    </tr>
+    <tr>
+      <td>17 to 21 bits</td>
+      <td>1111 XXXX, 10XX XXXX, 10XX XXXX, 10XX XXXX</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Just by performing a bit mask, one is capable of decoding UTF-8:</p>
+
+<ul>
+  <li>If value is &lt; 0x7F, it is a one code unit sequence</li>
+  <li>If value starts with 10, it is the continuation of a multiple code unit sequence.</li>
+  <li>If value starts with 110, it is the first of a two code unit sequence</li>
+  <li>If value starts with 1110, it is the first of a three code unit sequence</li>
+  <li>If value starts with 1111, it is the first of a four code unit sequence</li>
+</ul>
+
+<p>Another disadvantage of UTF-8 is that since some bit patterns are invalid, a text input has to be validated (checked for correctness) prior to being used.</p>
+
+<h2 id="utf-16">UTF-16</h2>
+
+<p>Remember that I told you that UCS-2 was obsolete? What about software that had adopted it? A superset using a variable-length encoding similarly to what UTF-8 is to ASCII was needed. UTF-16 is that. It uses 16 bit code units and comes in two variants: big and little endian.</p>
+
+<p>Any software that used UCS-2 has been upgraded to UTF-16. For Windows, it was Windows 2000. UTF-16, like UTF-8 has some invalid bit patterns and requires to be validated.</p>
+
+<h2 id="utf-32">UTF-32</h2>
+
+<p>For what is worth, UTF-32 should be viewed as identical to UCS-4. Any code point is encoded into a single 32bit code unit. Every code point can be retrieved by random access, in O(1), at the expense of memory consumption. This encoding is used for in-memory processing, but is almost never transmitted on the network.</p>
+
+<h1 id="thats-all-folks">That’s all folks!</h1>
+
+<p>I hope you learnt new things in this post. Thank you for having read it until the end.</p>]]></content><author><name></name></author><category term="Programming" /><summary type="html"><![CDATA[When talking to a former colleague, I realized that Unicode is somewhat misunderstood. I don’t pretend to know everything is to be known about, but I had the opportunity to play extensively with it, so this post is going to recap the concepts of Unicode and (hopefully), teach you one thing or two. At least from the point of view of a software developer. Fasten your seat belt and have fun.]]></summary></entry><entry><title type="html">Creating a non-null pointer in D</title><link href="https://opisano.github.io/d/2025/04/24/non-null-pointer.html" rel="alternate" type="text/html" title="Creating a non-null pointer in D" /><published>2025-04-24T16:29:59+02:00</published><updated>2025-04-24T16:29:59+02:00</updated><id>https://opisano.github.io/d/2025/04/24/non-null-pointer</id><content type="html" xml:base="https://opisano.github.io/d/2025/04/24/non-null-pointer.html"><![CDATA[<p>One of the recent discussions in the D programming language forums has been about adding support for non-nullable reference types in the language, similarly to what C# did in the recent years. One of the highlights of the discussion was that such a type could be implemented as a library solution, instead of baking it in the language.</p>
 
 <p>That picked my curiosity and I decided to give it a try to see if I could write such a type. In that post I will describe my solution.</p>
 
@@ -129,7 +287,7 @@ Since I chose to use the pointer type as <code class="language-plaintext highlig
 
 <h1 id="assignment-operator">Assignment operator</h1>
 
-<p>What if we want to change the value of the pointer ? We need to overload the assignement operator for both nullable and non-nullable variants. These two functions must only be defined if the pointer is mutable, otherwise, it would cause a compilation error. This can be checked by <code class="language-plaintext highlighter-rouge">static if</code> (compile-time if).</p>
+<p>What if we want to change the value of the pointer ? We need to overload the assignment operator for both nullable and non-nullable variants. These two functions must only be defined if the pointer is mutable, otherwise, it would cause a compilation error. This can be checked by <code class="language-plaintext highlighter-rouge">static if</code> (compile-time if).</p>
 
 <p>Mutability is checked via the <code class="language-plaintext highlighter-rouge">isMutable</code> trait, which evaluates to <code class="language-plaintext highlighter-rouge">true</code> for mutable pointers and <code class="language-plaintext highlighter-rouge">false</code> for <code class="language-plaintext highlighter-rouge">const</code> or <code class="language-plaintext highlighter-rouge">immutable</code> pointers.</p>
 
@@ -140,7 +298,7 @@ Since I chose to use the pointer type as <code class="language-plaintext highlig
      */</span>
     <span class="kt">void</span> <span class="n">opAssign</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="kc">null</span><span class="p">))</span> <span class="nd">@disable</span><span class="p">;</span>
 
-    <span class="c1">// if the pointer can be modified, we define assignement operators.</span>
+    <span class="c1">// if the pointer can be modified, we define assignment operators.</span>
     <span class="k">static</span> <span class="k">if</span> <span class="p">(</span><span class="n">isMutable</span><span class="p">!</span><span class="n">T</span><span class="p">)</span>
     <span class="p">{</span>
         <span class="cm">/**

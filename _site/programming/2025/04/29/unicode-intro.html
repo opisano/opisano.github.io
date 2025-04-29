@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Intro to Unicode | Ol’s homepage</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Intro to Unicode" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="When talking to a former colleague, I realized that Unicode is somewhat misunderstood. I don’t pretend to know everything is to be known about, but I had the opportunity to play extensively with it, so this post is going to recap the concepts of Unicode and (hopefully), teach you one thing or two. At least from the point of view of a software developer. Fasten your seat belt and have fun." />
+<meta property="og:description" content="When talking to a former colleague, I realized that Unicode is somewhat misunderstood. I don’t pretend to know everything is to be known about, but I had the opportunity to play extensively with it, so this post is going to recap the concepts of Unicode and (hopefully), teach you one thing or two. At least from the point of view of a software developer. Fasten your seat belt and have fun." />
+<link rel="canonical" href="https://opisano.github.io/programming/2025/04/29/unicode-intro.html" />
+<meta property="og:url" content="https://opisano.github.io/programming/2025/04/29/unicode-intro.html" />
+<meta property="og:site_name" content="Ol’s homepage" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2025-04-29T19:03:59+02:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Intro to Unicode" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2025-04-29T19:03:59+02:00","datePublished":"2025-04-29T19:03:59+02:00","description":"When talking to a former colleague, I realized that Unicode is somewhat misunderstood. I don’t pretend to know everything is to be known about, but I had the opportunity to play extensively with it, so this post is going to recap the concepts of Unicode and (hopefully), teach you one thing or two. At least from the point of view of a software developer. Fasten your seat belt and have fun.","headline":"Intro to Unicode","mainEntityOfPage":{"@type":"WebPage","@id":"https://opisano.github.io/programming/2025/04/29/unicode-intro.html"},"url":"https://opisano.github.io/programming/2025/04/29/unicode-intro.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://opisano.github.io/feed.xml" title="Ol&apos;s homepage" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Ol&#39;s homepage</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Intro to Unicode</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2025-04-29T19:03:59+02:00" itemprop="datePublished">Apr 29, 2025
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>When talking to a former colleague, I realized that Unicode is somewhat misunderstood. I don’t pretend to know everything is to be known about, but I had the opportunity to play extensively with it, so this post is going to recap the concepts of Unicode and (hopefully), teach you one thing or two. At least from the point of view of a software developer. Fasten your seat belt and have fun.</p>
+
+<h1 id="first-thing-to-know-unicode-is-not-an-encoding">First thing to know: Unicode is not an encoding</h1>
+
+<p>Ok, this one may sound a bit strange if you previously read the documentation of a major operating system vendor, or some coffee-flavoured programming language but let’s be clear :</p>
+
+<ul>
+  <li>Unicode is not a text encoding</li>
+  <li>Unicode <em>characters</em> are not 16 bits wide.</li>
+</ul>
+
+<p>If any of these two statements hurts your beliefs, I am deeply sorry (no I am not, I am just being polite). It is time to take the red pill and to get out of the matrix.</p>
+
+<h1 id="how-unicode-should-be-viewed">How Unicode should be viewed</h1>
+
+<p>To get a grasp of Unicode, you can go to <a href="https://symbl.cc/en/unicode-table/">https://symbl.cc/en/unicode-table/</a>. Scroll the page is little bit. The heart of Unicode is just a giant table, with <em>symbols</em> associated to <em>numerical values</em>. For instance, the symbol <code class="language-plaintext highlighter-rouge">é</code> is associated to the number <code class="language-plaintext highlighter-rouge">U+00E9</code> (which is just a fancy way of saying that it is a hexadecimal value). There are 1 111 998 possible Unicode symbols.</p>
+
+<p>In particular, this does not say anything about:</p>
+
+<ul>
+  <li>How many bytes are used to store this value.</li>
+  <li>How these bytes are stored in memory.</li>
+</ul>
+
+<p>Which are what constitutes an encoding.</p>
+
+<p>Ok now, I am going to make a promise.</p>
+
+<p>For the remaining of this post, I won’t use the word <em>character</em> anymore. Because this word is <em>polysemic</em>. It bears multiple meanings. Too many. Instead, I am going to introduce some replacement words.</p>
+
+<h2 id="graphemes">Graphemes</h2>
+
+<p>Ok let’s go back to our giant table.</p>
+
+<p>The symbols that are displayed in the table are called <strong>graphemes</strong>. A grapheme is a single graphical unit that a reader recognizes as a single element of a writing system. For a western person, it could be an alphabetical letter or a punctuation sign. For another writing system, it may be something else.</p>
+
+<p>To get back to my previous example, <code class="language-plaintext highlighter-rouge">é</code> is a grapheme that was given a description: <em>small letter E with acute</em>.</p>
+
+<h2 id="code-points">Code points</h2>
+
+<p>Now that let’s define the numerical value. The correct name for that is <em>Unicode code point</em>. A code point is the basic part of information. A text is a sequence of code points. A grapheme can be defined by one or many code points. For instance, the <code class="language-plaintext highlighter-rouge">é</code> grapheme can be written in two ways:</p>
+
+<ul>
+  <li>using the <code class="language-plaintext highlighter-rouge">e</code> code point (U+0065), followed by the <code class="language-plaintext highlighter-rouge">´</code> code point (U+0301).</li>
+  <li>using a single code point (U+00E9)</li>
+</ul>
+
+<p>Note that I still haven’t said anything about the way code points are stored into memory…</p>
+
+<h2 id="glyphs">Glyphs</h2>
+
+<p>Effectively, graphemes can be obtained by combining multiple graphical parts together into a single representation. Those parts are called <em>glyphs</em>. Glyphs are important if you’re performing text rendering, but can be ignored for text processing purposes.</p>
+
+<p>What should be aware of, is that the same text can be obtained by different manners, which may lead to surprising results if you are trying perform text comparisons (Python code below):</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="o">&gt;&gt;&gt;</span> <span class="s">'</span><span class="se">\u00E9</span><span class="s">'</span>
+<span class="s">'é'</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="s">'</span><span class="se">\u0065\u0301</span><span class="s">'</span>
+<span class="s">'é'</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="s">'</span><span class="se">\u00E9</span><span class="s">'</span> <span class="o">==</span> <span class="s">'</span><span class="se">\u0065\u0301</span><span class="s">'</span>
+<span class="bp">False</span></code></pre></figure>
+
+<p>Imagine trying to access a file on your disk, but providing the wrong code point sequence. Imagine typing a URL in your browser, and accessing a phishing website…</p>
+
+<h1 id="normalization">Normalization</h1>
+
+<p>To avoid all these issues, Unicode text should be normalized prior to being compared. There are several normalizations possible, which can be divided in two groups:</p>
+
+<ul>
+  <li>Either we decompose text into the maximum number of code points</li>
+  <li>or we compose into the minimum number of code points.</li>
+</ul>
+
+<p>and then comparison is performed.</p>
+
+<h1 id="a-bit-of-history">A bit of history</h1>
+
+<p>Ok, now that you are definitively disgusted, let’s talk a bit about history. At the time I write this post, the latest Unicode version is 16.0. Version 1.0 was released in 1993, which means it now contains a lot more than it used to be. In fact, until 2001, it contained less than 65 536 entries in its table, which meant that 16 bit values were enough to encode text.</p>
+
+<p>This is why you may encounter some outdated documentation that used to state that unicode <em>was</em> a 16 bit encoding. It is known as UCS-2 and was declined in two variants: UCS-2 LE (little endian), and UCS-2 BE (big endian). UCS stands for <strong>Universal Character Set</strong> (sic). Today this encoding is considered obsolete, since it can only represent a fraction of Unicode.</p>
+
+<p>UCS-2 required to double the memory used for storing text and to change all your text processing functions. for instance, instead of the venerable C function <code class="language-plaintext highlighter-rouge">strlen()</code>, one should use the <code class="language-plaintext highlighter-rouge">wcslen()</code> function against an array of <code class="language-plaintext highlighter-rouge">wchar_t</code> elements.</p>
+
+<p>Windows NT was the first operating system to fully embrace UCS-2 and to set <code class="language-plaintext highlighter-rouge">sizeof(wchar_t) == 2</code>.</p>
+
+<p>Since 2001, UCS-2 has been superseeded by UCS-4, and some non-Windows systems define <code class="language-plaintext highlighter-rouge">sizeof(wchar_t) == 4</code>, but the idea of using 4 times more memory to store text was not acceptable for most of us, so someone had to invent a better way</p>
+
+<h1 id="unicode-encodings">Unicode encodings</h1>
+
+<p>Finally, I am going to talk about encodings! In the Unicode world, they are called <strong>Unicode Transformation Formats</strong> and come into different flavours: UTF-8, UTF-16 and UTF-32. They can represent the whole Unicode set. If Unicode by itself is not an encoding, it provides several of them.</p>
+
+<p>They all decompose code points into one or many <strong>code units</strong>. A code unit can be viewed as a 8/16/32 bit value that is used to encode a part or the entirety of a code point.</p>
+
+<h2 id="utf-8">UTF-8</h2>
+
+<p>UTF-8 uses between one and four 8 bit code units to encode a code point. It has several advantages over the other two:</p>
+
+<ul>
+  <li>It is backward compatible with US-ASCII (in fact any US-ASCII text is also a UTF-8 text).</li>
+  <li>It doesn’t have endianness issue, since every code unit is one byte.</li>
+  <li>Most of the C library such as <code class="language-plaintext highlighter-rouge">strlen()</code> are compatible with it.</li>
+</ul>
+
+<p>It has also disadvantages for languages that don’t use the latin alphabet. For instance in Japanese, the same text can occupy more space in UTF-8 than in UTF-16.</p>
+
+<p>To encode a code point into UTF-8, count how many bits are needed to represent the code point, and use the pattern described below</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Bits needed</th>
+      <th>Binary representation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>up to 7 bits</td>
+      <td>0XXX XXXX</td>
+    </tr>
+    <tr>
+      <td>8 to 11 bits</td>
+      <td>110X XXXX, 10XX XXXX</td>
+    </tr>
+    <tr>
+      <td>12 to 16 bits</td>
+      <td>1110 XXXX, 10XX XXXX, 10XX XXXX</td>
+    </tr>
+    <tr>
+      <td>17 to 21 bits</td>
+      <td>1111 XXXX, 10XX XXXX, 10XX XXXX, 10XX XXXX</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Just by performing a bit mask, one is capable of decoding UTF-8:</p>
+
+<ul>
+  <li>If value is &lt; 0x7F, it is a one code unit sequence</li>
+  <li>If value starts with 10, it is the continuation of a multiple code unit sequence.</li>
+  <li>If value starts with 110, it is the first of a two code unit sequence</li>
+  <li>If value starts with 1110, it is the first of a three code unit sequence</li>
+  <li>If value starts with 1111, it is the first of a four code unit sequence</li>
+</ul>
+
+<p>Another disadvantage of UTF-8 is that since some bit patterns are invalid, a text input has to be validated (checked for correctness) prior to being used.</p>
+
+<h2 id="utf-16">UTF-16</h2>
+
+<p>Remember that I told you that UCS-2 was obsolete? What about software that had adopted it? A superset using a variable-length encoding similarly to what UTF-8 is to ASCII was needed. UTF-16 is that. It uses 16 bit code units and comes in two variants: big and little endian.</p>
+
+<p>Any software that used UCS-2 has been upgraded to UTF-16. For Windows, it was Windows 2000. UTF-16, like UTF-8 has some invalid bit patterns and requires to be validated.</p>
+
+<h2 id="utf-32">UTF-32</h2>
+
+<p>For what is worth, UTF-32 should be viewed as identical to UCS-4. Any code point is encoded into a single 32bit code unit. Every code point can be retrieved by random access, in O(1), at the expense of memory consumption. This encoding is used for in-memory processing, but is almost never transmitted on the network.</p>
+
+<h1 id="thats-all-folks">That’s all folks!</h1>
+
+<p>I hope you learnt new things in this post. Thank you for having read it until the end.</p>
+
+  </div><a class="u-url" href="/programming/2025/04/29/unicode-intro.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Ol&#39;s homepage</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Ol&#39;s homepage</li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/opisano"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">opisano</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>My reflexions on tech and music</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

@@ -155,7 +155,7 @@ assert (i == 42);
 
 # Assignment operator 
 
-What if we want to change the value of the pointer ? We need to overload the assignement operator for both nullable and non-nullable variants. These two functions must only be defined if the pointer is mutable, otherwise, it would cause a compilation error. This can be checked by `static if` (compile-time if). 
+What if we want to change the value of the pointer ? We need to overload the assignment operator for both nullable and non-nullable variants. These two functions must only be defined if the pointer is mutable, otherwise, it would cause a compilation error. This can be checked by `static if` (compile-time if). 
 
 Mutability is checked via the `isMutable` trait, which evaluates to `true` for mutable pointers and `false` for `const` or `immutable` pointers.
 
@@ -168,7 +168,7 @@ struct NonNull(T) if (isPointer!T)
      */
     void opAssign(typeof(null)) @disable;
 
-    // if the pointer can be modified, we define assignement operators.
+    // if the pointer can be modified, we define assignment operators.
     static if (isMutable!T)
     {
         /**
