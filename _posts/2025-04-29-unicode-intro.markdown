@@ -57,7 +57,7 @@ Note that I still haven't said anything about the way code points are stored int
 
 Effectively, graphemes can be obtained by combining multiple graphical parts together into a single representation. Those parts are called *glyphs*. Glyphs are important if you're performing text rendering, but can be ignored for text processing purposes. 
 
-What should be aware of, is that the same text can be obtained by different manners, which may lead to surprising results if you are trying perform text comparisons (Python code below):
+What you should be aware of, is that the same text can be obtained by different manners, which may lead to surprising results if you are trying perform text comparisons (Python code below):
 
 {% highlight Python %}
 >>> '\u00E9'
@@ -75,10 +75,12 @@ Imagine trying to access a file on your disk, but providing the wrong code point
 
 To avoid all these issues, Unicode text should be normalized prior to being compared. There are several normalizations possible, which can be divided in two groups:
 
- * Either we decompose text into the maximum number of code points 
- * or we compose into the minimum number of code points.
+ * Either we decompose text into the maximum number of code points (NFD and NFKD methods),
+ * or we compose into the minimum number of code points (NFC and NFKC methods).
 
 and then comparison is performed.
+
+I won't cover the details here (this post is already long enough).
 
 
 # A bit of history 
@@ -86,6 +88,8 @@ and then comparison is performed.
 Ok, now that you are definitively disgusted, let's talk a bit about history. At the time I write this post, the latest Unicode version is 16.0. Version 1.0 was released in 1993, which means it now contains a lot more than it used to be. In fact, until 2001, it contained less than 65 536 entries in its table, which meant that 16 bit values were enough to encode text. 
 
 This is why you may encounter some outdated documentation that used to state that unicode *was* a 16 bit encoding. It is known as UCS-2 and was declined in two variants: UCS-2 LE (little endian), and UCS-2 BE (big endian). UCS stands for **Universal Character Set** (sic). Today this encoding is considered obsolete, since it can only represent a fraction of Unicode. 
+
+This led to a minor revision of the C programming language called *C95*, to introduce wide characters (size not specified, but larger than a char) and associated functions. 
 
 UCS-2 required to double the memory used for storing text and to change all your text processing functions. for instance, instead of the venerable C function `strlen()`, one should use the `wcslen()` function against an array of `wchar_t` elements.
 
@@ -134,9 +138,9 @@ Another disadvantage of UTF-8 is that since some bit patterns are invalid, a tex
 
 ## UTF-16
 
-Remember that I told you that UCS-2 was obsolete? What about software that had adopted it? A superset using a variable-length encoding similarly to what UTF-8 is to ASCII was needed. UTF-16 is that. It uses 16 bit code units and comes in two variants: big and little endian.
+Remember that I told you that UCS-2 was obsolete? What about software that had adopted it? A superset using a variable-length encoding similarly to what UTF-8 is to ASCII was needed. UTF-16 is that. It uses 16 bit code units and comes in two variants: big and little endian. A single code point can be written in one or two code units. 
 
-Any software that used UCS-2 has been upgraded to UTF-16. For Windows, it was Windows 2000. UTF-16, like UTF-8 has some invalid bit patterns and requires to be validated. 
+Any software that used UCS-2 has been upgraded to UTF-16. For Windows, it was Windows 2000. UTF-16, like UTF-8 has some invalid bit patterns and requires input to be validated. 
 
 
 ## UTF-32
@@ -146,4 +150,4 @@ For what is worth, UTF-32 should be viewed as identical to UCS-4. Any code point
 
 # That's all folks!
 
-I hope you learnt new things in this post. Thank you for having read it until the end.
+I hope you learnt new things in this post. Thank you for having read it until the end. I may continue on the subjet on another post, but for the moment, I will stop here and let you digest this. 

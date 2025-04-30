@@ -9,17 +9,17 @@
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="When talking to a former colleague, I realized that Unicode is somewhat misunderstood. I don’t pretend to know everything is to be known about, but I had the opportunity to play extensively with it, so this post is going to recap the concepts of Unicode and (hopefully), teach you one thing or two. At least from the point of view of a software developer. Fasten your seat belt and have fun." />
 <meta property="og:description" content="When talking to a former colleague, I realized that Unicode is somewhat misunderstood. I don’t pretend to know everything is to be known about, but I had the opportunity to play extensively with it, so this post is going to recap the concepts of Unicode and (hopefully), teach you one thing or two. At least from the point of view of a software developer. Fasten your seat belt and have fun." />
-<link rel="canonical" href="https://opisano.github.io/programming/2025/04/29/unicode-intro.html" />
-<meta property="og:url" content="https://opisano.github.io/programming/2025/04/29/unicode-intro.html" />
+<link rel="canonical" href="http://localhost:4000/programming/2025/04/29/unicode-intro.html" />
+<meta property="og:url" content="http://localhost:4000/programming/2025/04/29/unicode-intro.html" />
 <meta property="og:site_name" content="Ol’s homepage" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2025-04-29T19:03:59+02:00" />
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Intro to Unicode" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2025-04-29T19:03:59+02:00","datePublished":"2025-04-29T19:03:59+02:00","description":"When talking to a former colleague, I realized that Unicode is somewhat misunderstood. I don’t pretend to know everything is to be known about, but I had the opportunity to play extensively with it, so this post is going to recap the concepts of Unicode and (hopefully), teach you one thing or two. At least from the point of view of a software developer. Fasten your seat belt and have fun.","headline":"Intro to Unicode","mainEntityOfPage":{"@type":"WebPage","@id":"https://opisano.github.io/programming/2025/04/29/unicode-intro.html"},"url":"https://opisano.github.io/programming/2025/04/29/unicode-intro.html"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2025-04-29T19:03:59+02:00","datePublished":"2025-04-29T19:03:59+02:00","description":"When talking to a former colleague, I realized that Unicode is somewhat misunderstood. I don’t pretend to know everything is to be known about, but I had the opportunity to play extensively with it, so this post is going to recap the concepts of Unicode and (hopefully), teach you one thing or two. At least from the point of view of a software developer. Fasten your seat belt and have fun.","headline":"Intro to Unicode","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/programming/2025/04/29/unicode-intro.html"},"url":"http://localhost:4000/programming/2025/04/29/unicode-intro.html"}</script>
 <!-- End Jekyll SEO tag -->
-<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://opisano.github.io/feed.xml" title="Ol&apos;s homepage" /></head>
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Ol&apos;s homepage" /></head>
 <body><header class="site-header" role="banner">
 
   <div class="wrapper"><a class="site-title" rel="author" href="/">Ol&#39;s homepage</a><nav class="site-nav">
@@ -100,7 +100,7 @@
 
 <p>Effectively, graphemes can be obtained by combining multiple graphical parts together into a single representation. Those parts are called <em>glyphs</em>. Glyphs are important if you’re performing text rendering, but can be ignored for text processing purposes.</p>
 
-<p>What should be aware of, is that the same text can be obtained by different manners, which may lead to surprising results if you are trying perform text comparisons (Python code below):</p>
+<p>What you should be aware of, is that the same text can be obtained by different manners, which may lead to surprising results if you are trying perform text comparisons (Python code below):</p>
 
 <figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="o">&gt;&gt;&gt;</span> <span class="s">'</span><span class="se">\u00E9</span><span class="s">'</span>
 <span class="s">'é'</span>
@@ -116,17 +116,21 @@
 <p>To avoid all these issues, Unicode text should be normalized prior to being compared. There are several normalizations possible, which can be divided in two groups:</p>
 
 <ul>
-  <li>Either we decompose text into the maximum number of code points</li>
-  <li>or we compose into the minimum number of code points.</li>
+  <li>Either we decompose text into the maximum number of code points (NFD and NFKD methods),</li>
+  <li>or we compose into the minimum number of code points (NFC and NFKC methods).</li>
 </ul>
 
 <p>and then comparison is performed.</p>
+
+<p>I won’t cover the details here (this post is already long enough).</p>
 
 <h1 id="a-bit-of-history">A bit of history</h1>
 
 <p>Ok, now that you are definitively disgusted, let’s talk a bit about history. At the time I write this post, the latest Unicode version is 16.0. Version 1.0 was released in 1993, which means it now contains a lot more than it used to be. In fact, until 2001, it contained less than 65 536 entries in its table, which meant that 16 bit values were enough to encode text.</p>
 
 <p>This is why you may encounter some outdated documentation that used to state that unicode <em>was</em> a 16 bit encoding. It is known as UCS-2 and was declined in two variants: UCS-2 LE (little endian), and UCS-2 BE (big endian). UCS stands for <strong>Universal Character Set</strong> (sic). Today this encoding is considered obsolete, since it can only represent a fraction of Unicode.</p>
+
+<p>This led to a minor revision of the C programming language called <em>C95</em>, to introduce wide characters (size not specified, but larger than a char) and associated functions.</p>
 
 <p>UCS-2 required to double the memory used for storing text and to change all your text processing functions. for instance, instead of the venerable C function <code class="language-plaintext highlighter-rouge">strlen()</code>, one should use the <code class="language-plaintext highlighter-rouge">wcslen()</code> function against an array of <code class="language-plaintext highlighter-rouge">wchar_t</code> elements.</p>
 
@@ -195,9 +199,9 @@
 
 <h2 id="utf-16">UTF-16</h2>
 
-<p>Remember that I told you that UCS-2 was obsolete? What about software that had adopted it? A superset using a variable-length encoding similarly to what UTF-8 is to ASCII was needed. UTF-16 is that. It uses 16 bit code units and comes in two variants: big and little endian.</p>
+<p>Remember that I told you that UCS-2 was obsolete? What about software that had adopted it? A superset using a variable-length encoding similarly to what UTF-8 is to ASCII was needed. UTF-16 is that. It uses 16 bit code units and comes in two variants: big and little endian. A single code point can be written in one or two code units.</p>
 
-<p>Any software that used UCS-2 has been upgraded to UTF-16. For Windows, it was Windows 2000. UTF-16, like UTF-8 has some invalid bit patterns and requires to be validated.</p>
+<p>Any software that used UCS-2 has been upgraded to UTF-16. For Windows, it was Windows 2000. UTF-16, like UTF-8 has some invalid bit patterns and requires input to be validated.</p>
 
 <h2 id="utf-32">UTF-32</h2>
 
@@ -205,7 +209,7 @@
 
 <h1 id="thats-all-folks">That’s all folks!</h1>
 
-<p>I hope you learnt new things in this post. Thank you for having read it until the end.</p>
+<p>I hope you learnt new things in this post. Thank you for having read it until the end. I may continue on the subjet on another post, but for the moment, I will stop here and let you digest this.</p>
 
   </div><a class="u-url" href="/programming/2025/04/29/unicode-intro.html" hidden></a>
 </article>
