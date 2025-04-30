@@ -85,13 +85,13 @@ I won't cover the details here (this post is already long enough).
 
 # A bit of history 
 
-Ok, now that you are definitively disgusted, let's talk a bit about history. At the time I write this post, the latest Unicode version is 16.0. Version 1.0 was released in 1993, which means it now contains a lot more than it used to be. In fact, until 2001, it contained less than 65 536 entries in its table, which meant that 16 bit values were enough to encode text. 
+Ok, now that you are definitively disgusted, let's talk a bit about history. At the time I write this post, the latest Unicode version is 16.0. Version 1.0 was released in 1993, which means it now contains a lot more than it used to. In fact, until 2001, it contained less than 65 536 entries in its table, which meant that 16 bit values were enough to encode text. 
 
 This is why you may encounter some outdated documentation that used to state that unicode *was* a 16 bit encoding. It is known as UCS-2 and was declined in two variants: UCS-2 LE (little endian), and UCS-2 BE (big endian). UCS stands for **Universal Character Set** (sic). Today this encoding is considered obsolete, since it can only represent a fraction of Unicode. 
 
 This led to a minor revision of the C programming language called *C95*, to introduce wide characters (size not specified, but larger than a char) and associated functions. 
 
-UCS-2 required to double the memory used for storing text and to change all your text processing functions. for instance, instead of the venerable C function `strlen()`, one should use the `wcslen()` function against an array of `wchar_t` elements.
+UCS-2 required to double the memory used for storing text and to change all your text processing functions. For instance, instead of the venerable C function `strlen()`, one should use the `wcslen()` function against an array of `wchar_t` elements.
 
 Windows NT was the first operating system to fully embrace UCS-2 and to set `sizeof(wchar_t) == 2`. 
 

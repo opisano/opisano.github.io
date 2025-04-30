@@ -9,17 +9,17 @@
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="When talking to a former colleague, I realized that Unicode is somewhat misunderstood. I don’t pretend to know everything is to be known about, but I had the opportunity to play extensively with it, so this post is going to recap the concepts of Unicode and (hopefully), teach you one thing or two. At least from the point of view of a software developer. Fasten your seat belt and have fun." />
 <meta property="og:description" content="When talking to a former colleague, I realized that Unicode is somewhat misunderstood. I don’t pretend to know everything is to be known about, but I had the opportunity to play extensively with it, so this post is going to recap the concepts of Unicode and (hopefully), teach you one thing or two. At least from the point of view of a software developer. Fasten your seat belt and have fun." />
-<link rel="canonical" href="http://localhost:4000/programming/2025/04/29/unicode-intro.html" />
-<meta property="og:url" content="http://localhost:4000/programming/2025/04/29/unicode-intro.html" />
+<link rel="canonical" href="https://opisano.github.io/programming/2025/04/29/unicode-intro.html" />
+<meta property="og:url" content="https://opisano.github.io/programming/2025/04/29/unicode-intro.html" />
 <meta property="og:site_name" content="Ol’s homepage" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2025-04-29T19:03:59+02:00" />
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Intro to Unicode" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2025-04-29T19:03:59+02:00","datePublished":"2025-04-29T19:03:59+02:00","description":"When talking to a former colleague, I realized that Unicode is somewhat misunderstood. I don’t pretend to know everything is to be known about, but I had the opportunity to play extensively with it, so this post is going to recap the concepts of Unicode and (hopefully), teach you one thing or two. At least from the point of view of a software developer. Fasten your seat belt and have fun.","headline":"Intro to Unicode","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/programming/2025/04/29/unicode-intro.html"},"url":"http://localhost:4000/programming/2025/04/29/unicode-intro.html"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2025-04-29T19:03:59+02:00","datePublished":"2025-04-29T19:03:59+02:00","description":"When talking to a former colleague, I realized that Unicode is somewhat misunderstood. I don’t pretend to know everything is to be known about, but I had the opportunity to play extensively with it, so this post is going to recap the concepts of Unicode and (hopefully), teach you one thing or two. At least from the point of view of a software developer. Fasten your seat belt and have fun.","headline":"Intro to Unicode","mainEntityOfPage":{"@type":"WebPage","@id":"https://opisano.github.io/programming/2025/04/29/unicode-intro.html"},"url":"https://opisano.github.io/programming/2025/04/29/unicode-intro.html"}</script>
 <!-- End Jekyll SEO tag -->
-<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Ol&apos;s homepage" /></head>
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://opisano.github.io/feed.xml" title="Ol&apos;s homepage" /></head>
 <body><header class="site-header" role="banner">
 
   <div class="wrapper"><a class="site-title" rel="author" href="/">Ol&#39;s homepage</a><nav class="site-nav">
@@ -126,13 +126,13 @@
 
 <h1 id="a-bit-of-history">A bit of history</h1>
 
-<p>Ok, now that you are definitively disgusted, let’s talk a bit about history. At the time I write this post, the latest Unicode version is 16.0. Version 1.0 was released in 1993, which means it now contains a lot more than it used to be. In fact, until 2001, it contained less than 65 536 entries in its table, which meant that 16 bit values were enough to encode text.</p>
+<p>Ok, now that you are definitively disgusted, let’s talk a bit about history. At the time I write this post, the latest Unicode version is 16.0. Version 1.0 was released in 1993, which means it now contains a lot more than it used to. In fact, until 2001, it contained less than 65 536 entries in its table, which meant that 16 bit values were enough to encode text.</p>
 
 <p>This is why you may encounter some outdated documentation that used to state that unicode <em>was</em> a 16 bit encoding. It is known as UCS-2 and was declined in two variants: UCS-2 LE (little endian), and UCS-2 BE (big endian). UCS stands for <strong>Universal Character Set</strong> (sic). Today this encoding is considered obsolete, since it can only represent a fraction of Unicode.</p>
 
 <p>This led to a minor revision of the C programming language called <em>C95</em>, to introduce wide characters (size not specified, but larger than a char) and associated functions.</p>
 
-<p>UCS-2 required to double the memory used for storing text and to change all your text processing functions. for instance, instead of the venerable C function <code class="language-plaintext highlighter-rouge">strlen()</code>, one should use the <code class="language-plaintext highlighter-rouge">wcslen()</code> function against an array of <code class="language-plaintext highlighter-rouge">wchar_t</code> elements.</p>
+<p>UCS-2 required to double the memory used for storing text and to change all your text processing functions. For instance, instead of the venerable C function <code class="language-plaintext highlighter-rouge">strlen()</code>, one should use the <code class="language-plaintext highlighter-rouge">wcslen()</code> function against an array of <code class="language-plaintext highlighter-rouge">wchar_t</code> elements.</p>
 
 <p>Windows NT was the first operating system to fully embrace UCS-2 and to set <code class="language-plaintext highlighter-rouge">sizeof(wchar_t) == 2</code>.</p>
 
