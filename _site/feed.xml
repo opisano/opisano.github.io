@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="https://opisano.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://opisano.github.io/" rel="alternate" type="text/html" /><updated>2025-04-30T08:33:24+02:00</updated><id>https://opisano.github.io/feed.xml</id><title type="html">Ol’s homepage</title><subtitle>My reflexions on tech and music</subtitle><entry><title type="html">Intro to Unicode</title><link href="https://opisano.github.io/programming/2025/04/29/unicode-intro.html" rel="alternate" type="text/html" title="Intro to Unicode" /><published>2025-04-29T19:03:59+02:00</published><updated>2025-04-29T19:03:59+02:00</updated><id>https://opisano.github.io/programming/2025/04/29/unicode-intro</id><content type="html" xml:base="https://opisano.github.io/programming/2025/04/29/unicode-intro.html"><![CDATA[<p>When talking to a former colleague, I realized that Unicode is somewhat misunderstood. I don’t pretend to know everything is to be known about, but I had the opportunity to play extensively with it, so this post is going to recap the concepts of Unicode and (hopefully), teach you one thing or two. At least from the point of view of a software developer. Fasten your seat belt and have fun.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="https://opisano.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://opisano.github.io/" rel="alternate" type="text/html" /><updated>2025-05-01T09:41:09+02:00</updated><id>https://opisano.github.io/feed.xml</id><title type="html">Ol’s homepage</title><subtitle>My reflexions on tech and music</subtitle><entry><title type="html">Intro to Unicode</title><link href="https://opisano.github.io/programming/2025/04/29/unicode-intro.html" rel="alternate" type="text/html" title="Intro to Unicode" /><published>2025-04-29T19:03:59+02:00</published><updated>2025-04-29T19:03:59+02:00</updated><id>https://opisano.github.io/programming/2025/04/29/unicode-intro</id><content type="html" xml:base="https://opisano.github.io/programming/2025/04/29/unicode-intro.html"><![CDATA[<p>When talking to a former colleague, I realized that Unicode is somewhat misunderstood. I don’t pretend to know everything there is to be known about, but I had the opportunity to play extensively with it, so this post is going to recap the concepts of Unicode and (hopefully), teach you one thing or two. At least from the point of view of a software developer. Fasten your seat belt and have fun.</p>
 
 <h1 id="first-thing-to-know-unicode-is-not-an-encoding">First thing to know: Unicode is not an encoding</h1>
 
@@ -13,7 +13,7 @@
 
 <h1 id="how-unicode-should-be-viewed">How Unicode should be viewed</h1>
 
-<p>To get a grasp of Unicode, you can go to <a href="https://symbl.cc/en/unicode-table/">https://symbl.cc/en/unicode-table/</a>. Scroll the page is little bit. The heart of Unicode is just a giant table, with <em>symbols</em> associated to <em>numerical values</em>. For instance, the symbol <code class="language-plaintext highlighter-rouge">é</code> is associated to the number <code class="language-plaintext highlighter-rouge">U+00E9</code> (which is just a fancy way of saying that it is a hexadecimal value). There are 1 111 998 possible Unicode symbols.</p>
+<p>To get a grasp of Unicode, you can go to <a href="https://symbl.cc/en/unicode-table/">https://symbl.cc/en/unicode-table/</a>. Scroll the page a little bit. The heart of Unicode is just a giant table, with <em>symbols</em> associated to <em>numerical values</em>. For instance, the symbol <code class="language-plaintext highlighter-rouge">é</code> is associated to the number <code class="language-plaintext highlighter-rouge">U+00E9</code> (which is just a fancy way of saying that it is a hexadecimal value). There are 1 111 998 possible Unicode symbols.</p>
 
 <p>In particular, this does not say anything about:</p>
 
@@ -38,7 +38,7 @@
 
 <h2 id="code-points">Code points</h2>
 
-<p>Now that let’s define the numerical value. The correct name for that is <em>Unicode code point</em>. A code point is the basic part of information. A text is a sequence of code points. A grapheme can be defined by one or many code points. For instance, the <code class="language-plaintext highlighter-rouge">é</code> grapheme can be written in two ways:</p>
+<p>Now, let’s define the numerical value. The correct name for that is <em>Unicode code point</em>. A code point is the basic part of information. A text is a sequence of code points. A grapheme can be defined by one or many code points. For instance, the <code class="language-plaintext highlighter-rouge">é</code> grapheme can be written in two ways:</p>
 
 <ul>
   <li>using the <code class="language-plaintext highlighter-rouge">e</code> code point (U+0065), followed by the <code class="language-plaintext highlighter-rouge">´</code> code point (U+0301).</li>
@@ -87,7 +87,7 @@
 
 <p>Windows NT was the first operating system to fully embrace UCS-2 and to set <code class="language-plaintext highlighter-rouge">sizeof(wchar_t) == 2</code>.</p>
 
-<p>Since 2001, UCS-2 has been superseeded by UCS-4, and some non-Windows systems define <code class="language-plaintext highlighter-rouge">sizeof(wchar_t) == 4</code>, but the idea of using 4 times more memory to store text was not acceptable for most of us, so someone had to invent a better way</p>
+<p>Since 2001, UCS-2 has been superseeded by UCS-4, and some non-Windows systems define <code class="language-plaintext highlighter-rouge">sizeof(wchar_t) == 4</code>, but the idea of using 4 times more memory to store text was not acceptable for most of us, so someone had to invent a better way.</p>
 
 <h1 id="unicode-encodings">Unicode encodings</h1>
 
@@ -104,8 +104,6 @@
   <li>It doesn’t have endianness issue, since every code unit is one byte.</li>
   <li>Most of the C library such as <code class="language-plaintext highlighter-rouge">strlen()</code> are compatible with it.</li>
 </ul>
-
-<p>It has also disadvantages for languages that don’t use the latin alphabet. For instance in Japanese, the same text can occupy more space in UTF-8 than in UTF-16.</p>
 
 <p>To encode a code point into UTF-8, count how many bits are needed to represent the code point, and use the pattern described below</p>
 
@@ -136,31 +134,80 @@
   </tbody>
 </table>
 
+<h3 id="encoding">Encoding</h3>
+
+<p>For instance, lets try to encode the 大 symbol in UTF-8.</p>
+
+<ul>
+  <li>It has the U+5927 code point. 0x5927 is translated to 0b101100100100111 in binary and needs 15 bits to be represented.</li>
+  <li>We are in the third case (between 12 and 16 bits, 3 code units). The binary value is left padded with zeros up to 16 bits which are split in 4-6-6 pattern (0101 100100 100111).</li>
+  <li>The first four most significant bits are encoded in the first code unit (1110 <strong>0101</strong>).</li>
+  <li>The next six most significant bits are encoded in the first continuation byte (10<strong>100100</strong>).</li>
+  <li>The last six bits are encoded in the second continuation byte (10<strong>100111</strong>).</li>
+  <li>In hexadecimal, the UTF-8 representation of the U+5927 code point is E5 A4 A9.</li>
+</ul>
+
+<h3 id="decoding">Decoding</h3>
+
 <p>Just by performing a bit mask, one is capable of decoding UTF-8:</p>
 
 <ul>
-  <li>If value is &lt; 0x7F, it is a one code unit sequence</li>
-  <li>If value starts with 10, it is the continuation of a multiple code unit sequence.</li>
-  <li>If value starts with 110, it is the first of a two code unit sequence</li>
-  <li>If value starts with 1110, it is the first of a three code unit sequence</li>
-  <li>If value starts with 1111, it is the first of a four code unit sequence</li>
+  <li>If the value is &lt;= 0x7F, it is a one code unit sequence</li>
+  <li>If the value starts with 10, it is the continuation of a multiple code unit sequence.</li>
+  <li>If the value starts with 110, it is the first of a two code unit sequence</li>
+  <li>If the value starts with 1110, it is the first of a three code unit sequence</li>
+  <li>If the value starts with 1111, it is the first of a four code unit sequence</li>
 </ul>
 
-<p>Another disadvantage of UTF-8 is that since some bit patterns are invalid, a text input has to be validated (checked for correctness) prior to being used.</p>
+<p>Let’s decode our E5 A4 A9 sequence:</p>
+<ul>
+  <li>The first byte (E5) has three ones in the MSB. It is a three byte encoded code point. By applying a 0x0F mask, we extract the first four bits (0101).</li>
+  <li>The second byte (A4) must start with 10 (continuation byte). By applying a 0x3F mask, we extract the next six bits (100100)</li>
+  <li>The third byte (A9) must start with 10 (continuation byte). By applying a 0x3F mask, we extract the next six bits (100111)</li>
+  <li>Using two left shifts and two ORs, we combine the three extracted values into 0x5927, which is the 大 symbol.</li>
+</ul>
+
+<p>It has also disadvantages for languages that don’t use the latin alphabet. For instance in CJK languages (Chinese/Japanese/Korean), the same text can occupy more space in UTF-8 than in UTF-16. This is because most of the CJK symbols have code points that take between 12 to 16 bits to write. So they’ll be encoded in UTF-8 using 3 code units (24 bits), while a single UTF-16 code unit is sufficient (16bit). 
+Another disadvantage of UTF-8 is that since some bit patterns are invalid, a text input has to be validated (checked for correctness) prior to being used.</p>
 
 <h2 id="utf-16">UTF-16</h2>
 
 <p>Remember that I told you that UCS-2 was obsolete? What about software that had adopted it? A superset using a variable-length encoding similarly to what UTF-8 is to ASCII was needed. UTF-16 is that. It uses 16 bit code units and comes in two variants: big and little endian. A single code point can be written in one or two code units.</p>
 
+<p>UTF-16 is able to encode code points in the [0 - 0xFFFF] range in one code unit, and code points in the [0x10000 - 0x10FFFF] range in two code units. Which seems really efficient. This was done possible by disallowing the [0xD800 - 0xDFFF] to be code points. This range is reserved for encoding UTF-16 sequences.</p>
+
+<h3 id="encoding-1">Encoding</h3>
+
+<p>When encoding a code point in UTF-16, two possibilities:</p>
+<ul>
+  <li>If the code point is &lt;= 0xFFFF (the most frequent), it is written as is, in a one 16 bit code unit.</li>
+  <li>If the code point is &gt; 0xFFFF:
+    <ul>
+      <li>0x10000 is subtracted from the code point, leaving a 20 bit (max) value in the range [0 - 0xFFFFF].</li>
+      <li>The high 10 bits are added to 0xD800, which will result in a value between 0xD800 and 0xDBFF. This is our first code unit.</li>
+      <li>The low 10 bits ared added to 0xDC00, which will result in a value between 0xDC00 and 0xDFFF. This is our second code unit.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="decoding-1">Decoding</h3>
+
+<p>When decoding a code unit:</p>
+<ul>
+  <li>If the value is outside the range [0xD800 - 0xDFFF], it is our code point.</li>
+  <li>If the value is in the [0xD800 - 0xDBFF] range, this is the first of a two code unit sequence. We subtract the value 0xD800 and left shift by ten bits.</li>
+  <li>If the value is in the [0xDC00 - 0xDFFF] range, this is the second of a two code unit sequence. We subtract the value 0xDC00 and take the low ten bits.</li>
+</ul>
+
 <p>Any software that used UCS-2 has been upgraded to UTF-16. For Windows, it was Windows 2000. UTF-16, like UTF-8 has some invalid bit patterns and requires input to be validated.</p>
 
 <h2 id="utf-32">UTF-32</h2>
 
-<p>For what is worth, UTF-32 should be viewed as identical to UCS-4. Any code point is encoded into a single 32bit code unit. Every code point can be retrieved by random access, in O(1), at the expense of memory consumption. This encoding is used for in-memory processing, but is almost never transmitted on the network.</p>
+<p>For what it’s worth, UTF-32 should be viewed as identical to UCS-4. Any code point is encoded into a single 32 bit code unit. Every code point can be retrieved by random access, in O(1), at the expense of memory consumption. This encoding is used for in-memory processing, but is almost never transmitted on the network.</p>
 
 <h1 id="thats-all-folks">That’s all folks!</h1>
 
-<p>I hope you learnt new things in this post. Thank you for having read it until the end. I may continue on the subjet on another post, but for the moment, I will stop here and let you digest this.</p>]]></content><author><name></name></author><category term="Programming" /><summary type="html"><![CDATA[When talking to a former colleague, I realized that Unicode is somewhat misunderstood. I don’t pretend to know everything is to be known about, but I had the opportunity to play extensively with it, so this post is going to recap the concepts of Unicode and (hopefully), teach you one thing or two. At least from the point of view of a software developer. Fasten your seat belt and have fun.]]></summary></entry><entry><title type="html">Creating a non-null pointer in D</title><link href="https://opisano.github.io/d/2025/04/24/non-null-pointer.html" rel="alternate" type="text/html" title="Creating a non-null pointer in D" /><published>2025-04-24T16:29:59+02:00</published><updated>2025-04-24T16:29:59+02:00</updated><id>https://opisano.github.io/d/2025/04/24/non-null-pointer</id><content type="html" xml:base="https://opisano.github.io/d/2025/04/24/non-null-pointer.html"><![CDATA[<p>One of the recent discussions in the D programming language forums has been about adding support for non-nullable reference types in the language, similarly to what C# did in the recent years. One of the highlights of the discussion was that such a type could be implemented as a library solution, instead of baking it in the language.</p>
+<p>I hope you learnt new things in this post. Thank you for having read it until the end. I may continue on the subjet on another post, but for the moment, I will stop here and let you digest this.</p>]]></content><author><name></name></author><category term="Programming" /><summary type="html"><![CDATA[When talking to a former colleague, I realized that Unicode is somewhat misunderstood. I don’t pretend to know everything there is to be known about, but I had the opportunity to play extensively with it, so this post is going to recap the concepts of Unicode and (hopefully), teach you one thing or two. At least from the point of view of a software developer. Fasten your seat belt and have fun.]]></summary></entry><entry><title type="html">Creating a non-null pointer in D</title><link href="https://opisano.github.io/d/2025/04/24/non-null-pointer.html" rel="alternate" type="text/html" title="Creating a non-null pointer in D" /><published>2025-04-24T16:29:59+02:00</published><updated>2025-04-24T16:29:59+02:00</updated><id>https://opisano.github.io/d/2025/04/24/non-null-pointer</id><content type="html" xml:base="https://opisano.github.io/d/2025/04/24/non-null-pointer.html"><![CDATA[<p>One of the recent discussions in the D programming language forums has been about adding support for non-nullable reference types in the language, similarly to what C# did in the recent years. One of the highlights of the discussion was that such a type could be implemented as a library solution, instead of baking it in the language.</p>
 
 <p>That picked my curiosity and I decided to give it a try to see if I could write such a type. In that post I will describe my solution.</p>
 

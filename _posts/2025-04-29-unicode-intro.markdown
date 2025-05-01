@@ -5,7 +5,7 @@ date:   2025-04-29 19:03:59 +0200
 categories: Programming
 ---
 
-When talking to a former colleague, I realized that Unicode is somewhat misunderstood. I don't pretend to know everything is to be known about, but I had the opportunity to play extensively with it, so this post is going to recap the concepts of Unicode and (hopefully), teach you one thing or two. At least from the point of view of a software developer. Fasten your seat belt and have fun.
+When talking to a former colleague, I realized that Unicode is somewhat misunderstood. I don't pretend to know everything there is to be known about, but I had the opportunity to play extensively with it, so this post is going to recap the concepts of Unicode and (hopefully), teach you one thing or two. At least from the point of view of a software developer. Fasten your seat belt and have fun.
 
 
 # First thing to know: Unicode is not an encoding 
@@ -20,7 +20,7 @@ If any of these two statements hurts your beliefs, I am deeply sorry (no I am no
 
 # How Unicode should be viewed 
 
-To get a grasp of Unicode, you can go to [https://symbl.cc/en/unicode-table/](https://symbl.cc/en/unicode-table/). Scroll the page is little bit. The heart of Unicode is just a giant table, with *symbols* associated to *numerical values*. For instance, the symbol `é` is associated to the number `U+00E9` (which is just a fancy way of saying that it is a hexadecimal value). There are 1 111 998 possible Unicode symbols.
+To get a grasp of Unicode, you can go to [https://symbl.cc/en/unicode-table/](https://symbl.cc/en/unicode-table/). Scroll the page a little bit. The heart of Unicode is just a giant table, with *symbols* associated to *numerical values*. For instance, the symbol `é` is associated to the number `U+00E9` (which is just a fancy way of saying that it is a hexadecimal value). There are 1 111 998 possible Unicode symbols.
 
 In particular, this does not say anything about: 
 
@@ -45,7 +45,7 @@ To get back to my previous example, `é` is a grapheme that was given a descript
 
 ## Code points 
 
-Now that let's define the numerical value. The correct name for that is *Unicode code point*. A code point is the basic part of information. A text is a sequence of code points. A grapheme can be defined by one or many code points. For instance, the `é` grapheme can be written in two ways:
+Now, let's define the numerical value. The correct name for that is *Unicode code point*. A code point is the basic part of information. A text is a sequence of code points. A grapheme can be defined by one or many code points. For instance, the `é` grapheme can be written in two ways:
 
  * using the `e` code point (U+0065), followed by the `´` code point (U+0301).
  * using a single code point (U+00E9)
@@ -95,7 +95,7 @@ UCS-2 required to double the memory used for storing text and to change all your
 
 Windows NT was the first operating system to fully embrace UCS-2 and to set `sizeof(wchar_t) == 2`. 
 
-Since 2001, UCS-2 has been superseeded by UCS-4, and some non-Windows systems define `sizeof(wchar_t) == 4`, but the idea of using 4 times more memory to store text was not acceptable for most of us, so someone had to invent a better way 
+Since 2001, UCS-2 has been superseeded by UCS-4, and some non-Windows systems define `sizeof(wchar_t) == 4`, but the idea of using 4 times more memory to store text was not acceptable for most of us, so someone had to invent a better way. 
 
 
 # Unicode encodings 
@@ -113,8 +113,6 @@ UTF-8 uses between one and four 8 bit code units to encode a code point. It has 
  * It doesn't have endianness issue, since every code unit is one byte. 
  * Most of the C library such as `strlen()` are compatible with it.
 
-It has also disadvantages for languages that don't use the latin alphabet. For instance in Japanese, the same text can occupy more space in UTF-8 than in UTF-16.
-
 To encode a code point into UTF-8, count how many bits are needed to represent the code point, and use the pattern described below
 
 | Bits needed   | Binary representation                      |
@@ -124,15 +122,35 @@ To encode a code point into UTF-8, count how many bits are needed to represent t
 | 12 to 16 bits | 1110 XXXX, 10XX XXXX, 10XX XXXX            |
 | 17 to 21 bits | 1111 XXXX, 10XX XXXX, 10XX XXXX, 10XX XXXX |
 
+### Encoding 
+
+For instance, lets try to encode the 大 symbol in UTF-8.
+
+ * It has the U+5927 code point. 0x5927 is translated to 0b101100100100111 in binary and needs 15 bits to be represented. 
+ * We are in the third case (between 12 and 16 bits, 3 code units). The binary value is left padded with zeros up to 16 bits which are split in 4-6-6 pattern (0101 100100 100111).
+ * The first four most significant bits are encoded in the first code unit (1110 **0101**).
+ * The next six most significant bits are encoded in the first continuation byte (10**100100**).
+ * The last six bits are encoded in the second continuation byte (10**100111**).
+ * In hexadecimal, the UTF-8 representation of the U+5927 code point is E5 A4 A9.
+
+### Decoding 
 
 Just by performing a bit mask, one is capable of decoding UTF-8:
 
- * If value is < 0x7F, it is a one code unit sequence
- * If value starts with 10, it is the continuation of a multiple code unit sequence.
- * If value starts with 110, it is the first of a two code unit sequence
- * If value starts with 1110, it is the first of a three code unit sequence
- * If value starts with 1111, it is the first of a four code unit sequence
+ * If the value is <= 0x7F, it is a one code unit sequence
+ * If the value starts with 10, it is the continuation of a multiple code unit sequence.
+ * If the value starts with 110, it is the first of a two code unit sequence
+ * If the value starts with 1110, it is the first of a three code unit sequence
+ * If the value starts with 1111, it is the first of a four code unit sequence
 
+Let's decode our E5 A4 A9 sequence:
+ * The first byte (E5) has three ones in the MSB. It is a three byte encoded code point. By applying a 0x0F mask, we extract the first four bits (0101).
+ * The second byte (A4) must start with 10 (continuation byte). By applying a 0x3F mask, we extract the next six bits (100100)
+ * The third byte (A9) must start with 10 (continuation byte). By applying a 0x3F mask, we extract the next six bits (100111)
+ * Using two left shifts and two ORs, we combine the three extracted values into 0x5927, which is the 大 symbol.
+
+
+It has also disadvantages for languages that don't use the latin alphabet. For instance in CJK languages (Chinese/Japanese/Korean), the same text can occupy more space in UTF-8 than in UTF-16. This is because most of the CJK symbols have code points that take between 12 to 16 bits to write. So they'll be encoded in UTF-8 using 3 code units (24 bits), while a single UTF-16 code unit is sufficient (16bit). 
 Another disadvantage of UTF-8 is that since some bit patterns are invalid, a text input has to be validated (checked for correctness) prior to being used. 
 
 
@@ -140,12 +158,30 @@ Another disadvantage of UTF-8 is that since some bit patterns are invalid, a tex
 
 Remember that I told you that UCS-2 was obsolete? What about software that had adopted it? A superset using a variable-length encoding similarly to what UTF-8 is to ASCII was needed. UTF-16 is that. It uses 16 bit code units and comes in two variants: big and little endian. A single code point can be written in one or two code units. 
 
+UTF-16 is able to encode code points in the [0 - 0xFFFF] range in one code unit, and code points in the [0x10000 - 0x10FFFF] range in two code units. Which seems really efficient. This was done possible by disallowing the [0xD800 - 0xDFFF] to be code points. This range is reserved for encoding UTF-16 sequences. 
+
+### Encoding 
+
+When encoding a code point in UTF-16, two possibilities:
+ * If the code point is <= 0xFFFF (the most frequent), it is written as is, in a one 16 bit code unit.
+ * If the code point is > 0xFFFF:
+   * 0x10000 is subtracted from the code point, leaving a 20 bit (max) value in the range [0 - 0xFFFFF].
+   * The high 10 bits are added to 0xD800, which will result in a value between 0xD800 and 0xDBFF. This is our first code unit. 
+   * The low 10 bits ared added to 0xDC00, which will result in a value between 0xDC00 and 0xDFFF. This is our second code unit. 
+
+### Decoding 
+
+When decoding a code unit: 
+ * If the value is outside the range [0xD800 - 0xDFFF], it is our code point.
+ * If the value is in the [0xD800 - 0xDBFF] range, this is the first of a two code unit sequence. We subtract the value 0xD800 and left shift by ten bits.
+ * If the value is in the [0xDC00 - 0xDFFF] range, this is the second of a two code unit sequence. We subtract the value 0xDC00 and take the low ten bits.
+
 Any software that used UCS-2 has been upgraded to UTF-16. For Windows, it was Windows 2000. UTF-16, like UTF-8 has some invalid bit patterns and requires input to be validated. 
 
 
 ## UTF-32
 
-For what is worth, UTF-32 should be viewed as identical to UCS-4. Any code point is encoded into a single 32bit code unit. Every code point can be retrieved by random access, in O(1), at the expense of memory consumption. This encoding is used for in-memory processing, but is almost never transmitted on the network.
+For what it's worth, UTF-32 should be viewed as identical to UCS-4. Any code point is encoded into a single 32 bit code unit. Every code point can be retrieved by random access, in O(1), at the expense of memory consumption. This encoding is used for in-memory processing, but is almost never transmitted on the network.
 
 
 # That's all folks!
